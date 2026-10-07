@@ -22,14 +22,10 @@ Always the latest release. Checksums (`SHA256SUMS.txt`) and older versions are o
 
 ## Why this exists
 
-Codex DAG was born from a moment of envy. Watching [OmO](https://omo.dev) lay out multi-wave agent
-work as a DAG — parallel agents fanning out, results flowing back — made it obvious how much easier
-multi-agent work is to follow when you can *see* the graph instead of scrolling through logs.
-I wanted that same clarity for my everyday Codex sessions, so I built a small monitor that draws it
-from the records Codex already keeps on your machine.
+Seeing [OmO](https://omo.dev) lay out multi-wave agent work as a DAG, I thought it would be nice to try the
+same idea on what I use in the Codex app — so I built this for fun.
 
-Huge thanks to the OmO team for the inspiration. And honestly, I can't wait for an **OmO desktop app** —
-the day it ships, I'd love to use it.
+By the way, I'm really looking forward to the OmO desktop app. I hope it comes out soon.
 
 ## Features
 
