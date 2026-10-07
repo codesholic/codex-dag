@@ -8,6 +8,7 @@ import json
 import os
 import secrets
 import signal
+import socketserver
 import sys
 import threading
 import time
@@ -532,6 +533,18 @@ class Handler(BaseHTTPRequestHandler):
             return self.reply(400, json.dumps({"error": str(exc)}, ensure_ascii=False).encode())
 
 
+class LoopbackHTTPServer(ThreadingHTTPServer):
+    """Loopback server that skips HTTPServer's reverse DNS lookup on bind.
+
+    HTTPServer.server_bind resolves the bound address with socket.getfqdn,
+    which can stall for tens of seconds on hosts with slow reverse DNS and
+    delay the startup handshake the desktop hosts wait for.
+    """
+    def server_bind(self):
+        socketserver.TCPServer.server_bind(self)
+        self.server_name, self.server_port = self.server_address[:2]
+
+
 def serve(args):
     if not (RESOURCE_DIR / "index.html").is_file():
         raise ValueError("Resource directory must contain index.html")
@@ -546,7 +559,7 @@ def serve(args):
 def _serve_locked(args):
     global COLLECTOR
     snapshot()  # Validate existing evidence before starting any collector.
-    httpd = ThreadingHTTPServer(("127.0.0.1", args.port), Handler)
+    httpd = LoopbackHTTPServer(("127.0.0.1", args.port), Handler)
     httpd.daemon_threads = True
     info_path = DATA_DIR / ".server.json"
     parent = None
