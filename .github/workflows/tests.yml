@@ -25,10 +25,12 @@ jobs:
           cache: npm
           cache-dependency-path: windows/package-lock.json
       - uses: actions/setup-python@v5
+        id: python
         with:
           python-version: '3.13'
       - run: npm ci --prefix windows --no-audit --no-fund
       - name: Windows host tests
         run: npm test --prefix windows
         env:
-          CODEX_DAG_TEST_PYTHON: python3
+          # The integration test checks this path exists, so pass the absolute interpreter path.
+          CODEX_DAG_TEST_PYTHON: ${{ steps.python.outputs.python-path }}
