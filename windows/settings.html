@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'sha256-t4+0OUR6U05ulqvqzxTLfzK3prmDqPhoxD8MDUYetfE='; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Codex DAG 설정</title>
+  <style>
+    :root { color-scheme: dark; font: 14px system-ui, sans-serif; background: #0b0f12; color: #d7e0e7; }
+    body { margin: 28px; } h1 { margin: 0 0 22px; font-size: 23px; } label { display: block; margin-top: 17px; }
+    input[type=text] { box-sizing: border-box; width: 100%; padding: 10px; background: #10181d; color: #d7e0e7; border: 1px solid #344750; border-radius: 4px; }
+    .row { display: flex; gap: 10px; margin-top: 8px; } .row input { flex: 1; } .hint { font-size: 12px; color: #93a7b5; line-height: 1.6; }
+    button { padding: 8px 15px; border: 1px solid #3e5966; border-radius: 4px; background: #15303a; color: #bdeef5; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; } #status { min-height: 20px; color: #ffc366; } .actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+    input[type=checkbox] { accent-color: #00cfda; } #data { overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <h1>Codex DAG 설정</h1>
+  <p class="hint">Codex의 공개 실행 기록을 읽기만 합니다. 관찰할 프로젝트와 세션은 모니터 창에서 선택하세요.</p>
+  <label for="codex">Codex 데이터 폴더</label>
+  <div class="row"><input id="codex" type="text" autocomplete="off" spellcheck="false"><button id="browse" type="button">폴더 선택…</button></div>
+  <p class="hint">앱 데이터 폴더: <span id="data"></span></p>
+  <label><input id="start" type="checkbox"> 앱 실행 시 수집기 시작</label>
+  <label><input id="open" type="checkbox"> 앱 실행 시 모니터 창 열기</label>
+  <div class="actions"><button id="save" type="button">저장</button></div>
+  <p id="status" role="status" aria-live="polite"></p>
+  <script>
+'use strict';
+const codex = document.getElementById('codex');
+const start = document.getElementById('start');
+const open = document.getElementById('open');
+const save = document.getElementById('save');
+const status = document.getElementById('status');
+async function load() {
+  try {
+    const settings = await window.codexDAGSettings.get();
+    codex.value = settings.codexDir;
+    document.getElementById('data').textContent = settings.dataDir;
+    start.checked = settings.startOnLaunch;
+    open.checked = settings.openWindowOnLaunch;
+  } catch { status.textContent = '설정을 읽지 못했습니다. 창을 다시 열어 주세요.'; save.disabled = true; }
+}
+document.getElementById('browse').addEventListener('click', async () => {
+  try { const value = await window.codexDAGSettings.browseCodex(); if (value) codex.value = value; }
+  catch { status.textContent = '폴더를 선택하지 못했습니다.'; }
+});
+save.addEventListener('click', async () => {
+  save.disabled = true; status.textContent = '설정을 저장하는 중입니다…';
+  try {
+    const result = await window.codexDAGSettings.save({ codexDir: codex.value, startOnLaunch: start.checked, openWindowOnLaunch: open.checked });
+    if (!result.ok) status.textContent = result.error;
+  } catch { status.textContent = '설정을 저장하지 못했습니다.'; }
+  finally { save.disabled = false; }
+});
+load();
+  </script>
+</body>
+</html>

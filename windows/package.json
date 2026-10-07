@@ -1,0 +1,33 @@
+{
+  "name": "codex-dag-windows",
+  "productName": "Codex DAG",
+  "version": "0.1.8",
+  "description": "Codex development task and agent collaboration monitor",
+  "author": "Codex DAG",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.cjs",
+    "package:win": "electron-builder --win --x64 --dir --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "local.codex-dag.windows",
+    "productName": "Codex DAG",
+    "asar": true,
+    "directories": {"output": "../dist/windows", "buildResources": "../packaging/windows"},
+    "files": ["main.cjs", "backend.cjs", "preload.cjs", "settings.html", "package.json", "assets/**/*"],
+    "extraResources": [
+      {"from": "../build/windows/backend", "to": "backend"},
+      {"from": "../build/windows/python", "to": "python"},
+      {"from": "../build/windows/build-info.json", "to": "build-info.json"}
+    ],
+    "win": {"target": "dir", "signAndEditExecutable": false, "requestedExecutionLevel": "asInvoker"},
+    "npmRebuild": false,
+    "publish": null
+  }
+}

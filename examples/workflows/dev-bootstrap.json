@@ -1,0 +1,12 @@
+{
+  "run_id": "codex-dag-development",
+  "title": "Codex DAG 개발용 워크플로우",
+  "nodes": [
+    {
+      "id": "development-plan",
+      "title": "다음 개발 작업 계획 등록",
+      "role": "Coordinator",
+      "depends_on": []
+    }
+  ]
+}

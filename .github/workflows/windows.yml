@@ -1,0 +1,31 @@
+name: Windows installer
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: windows/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Actual Windows platform contracts
+        shell: pwsh
+        run: |
+          $env:PYTHONPATH = "$pwd/src/monitor"
+          python -m unittest discover -s tests -p test_platform_runtime.py -v
+          python -m unittest discover -s tests -p test_live_rollout.py -v
+      - name: Build and inspect installer
+        run: python packaging/windows/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Codex-DAG-Windows-x64
+          path: |
+            dist/Codex-DAG-*-Setup-x64.exe
+            dist/Codex-DAG-*-Setup-x64.exe.sha256
+            dist/windows/package-audit.json

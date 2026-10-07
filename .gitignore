@@ -1,0 +1,35 @@
+# Local development data (runtime settings, journals, build runtimes)
+.local/
+
+# Python and build output
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+DerivedData/
+*.dmg
+*.pkg
+*.xcarchive/
+*.dSYM/
+*.xcuserstate
+xcuserdata/
+
+# Local credentials and editor/OS files
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.key
+*.mobileprovision
+.DS_Store
+.idea/
+.vscode/
+
+# Windows desktop dependencies
+windows/node_modules/
